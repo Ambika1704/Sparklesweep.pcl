@@ -69,14 +69,3 @@ $env:PORT=3001; pnpm dev
 - `public/` — Static assets
 - `styles/` — Global CSS / Tailwind
 
-## Environment
-
-No required environment variables are included by default. If you add API keys or env variables, create a `.env.local` file and add them there (do not commit secrets).
-
-## Contributing
-
-Feel free to open issues or PRs. Keep changes focused and add a short description of what you changed.
-
-## License
-
-This project has no license file in the repo. Add one if you intend to open-source it (for example, `MIT`).
