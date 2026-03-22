@@ -38,7 +38,7 @@ These map to the npm script names in `package.json`.
 Start the dev server:
 
 ```bash
-pnpm dev
+pnpm run dev
 ```
 
 Open http://localhost:3000 in your browser.

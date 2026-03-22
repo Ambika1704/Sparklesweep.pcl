@@ -15,6 +15,50 @@ import { CalendarDays, CheckCircle2 } from "lucide-react"
 
 export default function BookingPage() {
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+  const [serviceType, setServiceType] = useState("")
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setLoading(true)
+    setError("")
+
+    if (!serviceType) {
+      setError("Please select a service type")
+      setLoading(false)
+      return
+    }
+
+    const formData = new FormData(e.currentTarget)
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      address: formData.get("address"),
+      date: formData.get("date"),
+      time: formData.get("time"),
+      serviceType,
+    }
+
+    try {
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+
+      if (!res.ok) {
+        const message = await res.text()
+        throw new Error(message)
+      }
+
+      setSubmitted(true)
+    } catch (err: any) {
+      setError(err.message || "Failed to submit booking")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   if (submitted) {
     return (
@@ -31,7 +75,10 @@ export default function BookingPage() {
         </p>
         <Button
           className="mt-8 rounded-full px-8"
-          onClick={() => setSubmitted(false)}
+          onClick={() => {
+            setSubmitted(false)
+            setServiceType("")
+          }}
         >
           Book Another
         </Button>
@@ -56,10 +103,7 @@ export default function BookingPage() {
 
       <div className="mx-auto max-w-2xl">
         <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            setSubmitted(true)
-          }}
+          onSubmit={handleSubmit}
           className="flex flex-col gap-6 rounded-xl border border-border bg-card p-8"
         >
           <div className="flex items-center gap-3 rounded-lg bg-primary/5 p-4">
@@ -69,15 +113,18 @@ export default function BookingPage() {
             </p>
           </div>
 
+          {error && <p className="text-sm font-medium text-destructive text-center">{error}</p>}
+
           <div className="grid gap-6 md:grid-cols-2">
             <div className="flex flex-col gap-2">
               <Label htmlFor="name">Full Name</Label>
-              <Input id="name" placeholder="Jane Doe" required />
+              <Input id="name" name="name" placeholder="Jane Doe" required />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="jane@example.com"
                 required
@@ -89,6 +136,7 @@ export default function BookingPage() {
             <Label htmlFor="address">Address</Label>
             <Input
               id="address"
+              name="address"
               placeholder="123 Green Street, Eco City"
               required
             />
@@ -97,17 +145,17 @@ export default function BookingPage() {
           <div className="grid gap-6 md:grid-cols-2">
             <div className="flex flex-col gap-2">
               <Label htmlFor="date">Preferred Date</Label>
-              <Input id="date" type="date" required />
+              <Input id="date" name="date" type="date" required />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="time">Preferred Time</Label>
-              <Input id="time" type="time" required />
+              <Input id="time" name="time" type="time" required />
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
             <Label>Service Type</Label>
-            <Select required>
+            <Select value={serviceType} onValueChange={setServiceType} required>
               <SelectTrigger>
                 <SelectValue placeholder="Select a service" />
               </SelectTrigger>
@@ -124,8 +172,8 @@ export default function BookingPage() {
             </Select>
           </div>
 
-          <Button type="submit" size="lg" className="mt-2 rounded-full">
-            Confirm Booking
+          <Button type="submit" size="lg" className="mt-2 rounded-full" disabled={loading}>
+            {loading ? "Confirming..." : "Confirm Booking"}
           </Button>
         </form>
       </div>

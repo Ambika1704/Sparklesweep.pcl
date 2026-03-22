@@ -30,6 +30,41 @@ const contactInfo = [
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setLoading(true)
+    setError("")
+
+    const formData = new FormData(e.currentTarget)
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      subject: formData.get("subject"),
+      message: formData.get("message"),
+    }
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+
+      if (!res.ok) {
+        const message = await res.text()
+        throw new Error(message)
+      }
+
+      setSubmitted(true)
+    } catch (err: any) {
+      setError(err.message || "Failed to send message")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   if (submitted) {
     return (
@@ -70,7 +105,6 @@ export default function ContactPage() {
       </div>
 
       <div className="grid gap-12 lg:grid-cols-5">
-        {/* Contact info */}
         <div className="flex flex-col gap-6 lg:col-span-2">
           {contactInfo.map((item) => (
             <div
@@ -95,23 +129,21 @@ export default function ContactPage() {
           ))}
         </div>
 
-        {/* Contact form */}
         <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            setSubmitted(true)
-          }}
+          onSubmit={handleSubmit}
           className="flex flex-col gap-6 rounded-xl border border-border bg-card p-8 lg:col-span-3"
         >
+          {error && <p className="text-sm font-medium text-destructive text-center">{error}</p>}
           <div className="grid gap-6 md:grid-cols-2">
             <div className="flex flex-col gap-2">
               <Label htmlFor="name">Full Name</Label>
-              <Input id="name" placeholder="Jane Doe" required />
+              <Input id="name" name="name" placeholder="Jane Doe" required />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="jane@example.com"
                 required
@@ -121,21 +153,22 @@ export default function ContactPage() {
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="subject">Subject</Label>
-            <Input id="subject" placeholder="How can we help?" required />
+            <Input id="subject" name="subject" placeholder="How can we help?" required />
           </div>
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="message">Message</Label>
             <Textarea
               id="message"
+              name="message"
               placeholder="Tell us about your cleaning needs..."
               rows={5}
               required
             />
           </div>
 
-          <Button type="submit" size="lg" className="rounded-full">
-            Send Message
+          <Button type="submit" size="lg" className="rounded-full" disabled={loading}>
+            {loading ? "Sending..." : "Send Message"}
           </Button>
         </form>
       </div>
