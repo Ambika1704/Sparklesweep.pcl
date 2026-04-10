@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sparklesweep Dark Deck</title>
+  <style>
+    :root {
+      --bg: #060708;
+      --bg2: #0b0f10;
+      --panel: #101516;
+      --panel-2: #0f1317;
+      --text: #f4f7f6;
+      --muted: #9ba7a4;
+      --line: rgba(255, 255, 255, 0.1);
+      --green: #56d78f;
+      --orange: #ff9d57;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(86, 215, 143, 0.08), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(255, 157, 87, 0.08), transparent 24%),
+        var(--bg);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 52px 52px;
+      pointer-events: none;
+    }
+
+    .deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      padding: 4vh 4vw;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    .shell {
+      width: 100%;
+      height: 100%;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 22%), var(--bg2);
+      overflow: hidden;
+    }
+
+    .odd .shell {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+    }
+
+    .side {
+      border-right: 1px solid var(--line);
+      padding: 2rem 1.6rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .mark {
+      width: 54px;
+      height: 54px;
+      border: 1px solid rgba(86, 215, 143, 0.4);
+      display: grid;
+      place-items: center;
+      color: var(--green);
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+
+    .side h3,
+    .brand {
+      margin: 0;
+      font-size: 0.9rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .side p {
+      margin: 0.8rem 0 0;
+      font-size: 0.86rem;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .side .meta {
+      border-top: 1px solid var(--line);
+      padding-top: 1rem;
+      font-size: 0.78rem;
+      line-height: 1.8;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .main {
+      padding: 2rem 2.2rem 1.6rem;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      min-width: 0;
+    }
+
+    .label {
+      margin: 0;
+      color: var(--green);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+    }
+
+    .title {
+      margin: 0.7rem 0 0;
+      font-size: clamp(2rem, 3.2vw, 4.2rem);
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      max-width: 11ch;
+    }
+
+    .title.wide {
+      max-width: 14ch;
+    }
+
+    .intro {
+      margin: 1rem 0 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 0.96rem;
+      line-height: 1.6;
+    }
+
+    .rule {
+      width: 110px;
+      height: 2px;
+      margin: 1.1rem 0 1.2rem;
+      background: linear-gradient(90deg, var(--green), transparent);
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.9rem;
+      align-content: start;
+    }
+
+    .card {
+      min-height: 120px;
+      padding: 0.95rem 1rem;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
+    }
+
+    .num {
+      display: inline-block;
+      margin-bottom: 0.7rem;
+      color: var(--orange);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .card h4 {
+      margin: 0 0 0.4rem;
+      font-size: 0.98rem;
+      line-height: 1.25;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .card p {
+      margin: 0;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .footer strong {
+      color: var(--text);
+    }
+
+    .even .shell {
+      padding: 1.6rem 1.8rem;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr 210px;
+      gap: 1.2rem;
+      align-items: end;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar .note {
+      padding-left: 1rem;
+      border-left: 1px solid rgba(86, 215, 143, 0.35);
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 1rem;
+      padding-top: 1.2rem;
+      min-height: 0;
+    }
+
+    .stack {
+      display: grid;
+      gap: 0.85rem;
+      align-content: start;
+    }
+
+    .row-card {
+      border: 1px solid var(--line);
+      padding: 0.95rem 1rem;
+      background: linear-gradient(90deg, rgba(86,215,143,0.04), transparent 45%);
+    }
+
+    .row-card h4 {
+      margin: 0 0 0.35rem;
+      font-size: 0.98rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .row-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      padding: 1rem;
+      display: grid;
+      gap: 0.8rem;
+      align-content: start;
+    }
+
+    .mini {
+      border-top: 1px solid var(--line);
+      padding-top: 0.75rem;
+    }
+
+    .mini:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+
+    .mini .k {
+      margin: 0 0 0.25rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    .mini .v {
+      margin: 0;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    .title-slide .shell {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+
+    .hero {
+      padding: 2.4rem 2.3rem;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .hero .title {
+      font-size: clamp(3rem, 6vw, 6rem);
+      max-width: none;
+    }
+
+    .hero-side {
+      border-left: 1px solid var(--line);
+      padding: 2.4rem 2rem;
+      display: grid;
+      align-content: space-between;
+      background: linear-gradient(180deg, rgba(86,215,143,0.03), transparent 40%);
+    }
+
+    .hero-box {
+      border: 1px solid var(--line);
+      padding: 1rem 1.1rem;
+      margin-top: 0.9rem;
+    }
+
+    .hero-box h4 {
+      margin: 0 0 0.35rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--green);
+    }
+
+    .hero-box p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    .slide-count {
+      position: fixed;
+      right: 1.8rem;
+      bottom: 1.4rem;
+      z-index: 8;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--line);
+      background: rgba(7, 9, 10, 0.92);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .click-zone {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 50vw;
+      z-index: 6;
+    }
+
+    .click-zone.left { left: 0; }
+    .click-zone.right { right: 0; }
+
+    @media (max-width: 980px) {
+      .odd .shell,
+      .title-slide .shell,
+      .split,
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .side,
+      .hero-side {
+        display: none;
+      }
+
+      .main,
+      .hero,
+      .even .shell {
+        padding: 1.3rem;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .slide {
+        padding: 2vh 2vw;
+      }
+
+      .grid-4 {
+        grid-template-columns: 1fr;
+      }
+
+      .title {
+        font-size: clamp(1.65rem, 8vw, 2.5rem);
+      }
+
+      .hero .title {
+        font-size: clamp(2.4rem, 12vw, 3.4rem);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck">
+    <section class="slide active title-slide">
+      <div class="shell">
+        <div class="hero">
+          <p class="label">Sparklesweep Pitch Deck</p>
+          <div>
+            <h1 class="title">Sparklesweep</h1>
+            <p class="intro">Clean spaces, green living. A dark-tech style concept for an eco-friendly cleaning platform with premium branding, digital booking, and scalable service delivery.</p>
+            <div class="rule"></div>
+          </div>
+          <div class="footer">
+            <span>Presented by Ambika B Sajjan</span>
+            <strong>Slide 01</strong>
+          </div>
+        </div>
+        <div class="hero-side">
+          <div>
+            <div class="mark">S</div>
+            <p class="brand">Eco-Friendly Cleaning Service</p>
+          </div>
+          <div>
+            <div class="hero-box">
+              <h4>Positioning</h4>
+              <p>Premium urban cleaning brand built around safety, sustainability, and convenience.</p>
+            </div>
+            <div class="hero-box">
+              <h4>Core Idea</h4>
+              <p>Blend strong service quality with a modern website, simple booking, and eco-safe products.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide even">
+      <div class="shell">
+        <div class="topbar">
+          <div>
+            <p class="label">Problem</p>
+            <h2 class="title wide">Why The Market Needs Change</h2>
+            <p class="intro">Traditional cleaning services solve hygiene, but often ignore health risk, sustainability, and digital convenience.</p>
+          </div>
+          <div class="note">Customers increasingly expect safer products and a more trustworthy service experience.</div>
+        </div>
+        <div class="split">
+          <div class="stack">
+            <div class="row-card"><h4>Chemical-heavy practices</h4><p>Many providers still use harsh materials that leave residue and strong odors behind.</p></div>
+            <div class="row-card"><h4>Health concerns</h4><p>Children, pets, and sensitive users are more affected by toxic cleaning products.</p></div>
+            <div class="row-card"><h4>Low sustainability</h4><p>Conventional products increase pollution and do not support greener living habits.</p></div>
+            <div class="row-card"><h4>Poor digital experience</h4><p>Booking, pricing, and service details are often unclear or handled manually.</p></div>
+          </div>
+          <div class="panel">
+            <div class="mini"><p class="k">Gap</p><p class="v">A modern eco-cleaning brand with a clean website and easy booking flow.</p></div>
+            <div class="mini"><p class="k">User Need</p><p class="v">Safe cleaning, transparent pricing, and simple access from mobile or desktop.</p></div>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Problem Definition</span>
+          <strong>Slide 02</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide odd">
+      <div class="shell">
+        <aside class="side">
+          <div>
+            <div class="mark">S</div>
+            <p class="brand">Sparklesweep</p>
+            <p>An eco-focused service model built to feel premium, reliable, and digitally ready.</p>
+          </div>
+          <div class="meta">Solution Strategy<br>Safe Cleaning<br>Modern Delivery</div>
+        </aside>
+        <div class="main">
+          <div>
+            <p class="label">Solution</p>
+            <h2 class="title wide">What Sparklesweep Offers</h2>
+            <p class="intro">Sparklesweep combines eco-friendly operations with a startup-style service experience for homes and offices.</p>
+            <div class="rule"></div>
+          </div>
+          <div class="grid-4">
+            <article class="card"><span class="num">01</span><h4>Organic products</h4><p>Uses non-toxic materials that are safer for everyday residential and office use.</p></article>
+            <article class="card"><span class="num">02</span><h4>Professional cleaning</h4><p>Delivers reliable hygiene standards without depending on harsh chemical methods.</p></article>
+            <article class="card"><span class="num">03</span><h4>Eco positioning</h4><p>Reduces environmental impact while supporting a healthier customer lifestyle.</p></article>
+            <article class="card"><span class="num">04</span><h4>Digital-ready service</h4><p>Connects cleaning operations with online booking, pricing visibility, and customer trust.</p></article>
+          </div>
+          <div class="footer">
+            <span>Core Proposition</span>
+            <strong>Slide 03</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide even">
+      <div class="shell">
+        <div class="topbar">
+          <div>
+            <p class="label">Website Design</p>
+            <h2 class="title wide">Interface Direction</h2>
+            <p class="intro">The website is designed as a clean, premium product surface that reflects trust, clarity, and eco-friendly branding.</p>
+          </div>
+          <div class="note">Dark hero sections, clear cards, structured grids, and high-contrast content help the brand feel modern.</div>
+        </div>
+        <div class="split">
+          <div class="stack">
+            <div class="row-card"><h4>Premium first impression</h4><p>The landing page uses strong headlines, bold spacing, and clear section breaks.</p></div>
+            <div class="row-card"><h4>Eco-tech palette</h4><p>Green accents signal sustainability while dark surfaces create a polished startup look.</p></div>
+            <div class="row-card"><h4>Simple navigation</h4><p>Users can quickly move between services, pricing, booking, testimonials, and contact pages.</p></div>
+            <div class="row-card"><h4>Mobile responsive</h4><p>The layout adapts to smaller screens so booking and browsing remain easy on phones.</p></div>
+          </div>
+          <div class="panel">
+            <div class="mini"><p class="k">Design Goal</p><p class="v">Make the website feel premium rather than like a generic service listing page.</p></div>
+            <div class="mini"><p class="k">Experience</p><p class="v">Readable typography, structured cards, and clear action buttons guide the user journey.</p></div>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Frontend Experience</span>
+          <strong>Slide 04</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide odd">
+      <div class="shell">
+        <aside class="side">
+          <div>
+            <div class="mark">S</div>
+            <p class="brand">Tech Stack</p>
+            <p>The product is backed by a modern web stack suited for service platforms and booking workflows.</p>
+          </div>
+          <div class="meta">Build System<br>Frontend<br>Backend Ready</div>
+        </aside>
+        <div class="main">
+          <div>
+            <p class="label">Tech Stack</p>
+            <h2 class="title wide">Tools Behind The Website</h2>
+            <p class="intro">The implementation uses a structured modern stack that supports design consistency, data handling, and future scale.</p>
+            <div class="rule"></div>
+          </div>
+          <div class="grid-4">
+            <article class="card"><span class="num">01</span><h4>Next.js app router</h4><p>Provides a strong foundation for page routing, layout management, and API integration.</p></article>
+            <article class="card"><span class="num">02</span><h4>React components</h4><p>Reusable UI blocks keep the interface consistent across services, pricing, booking, and contact flows.</p></article>
+            <article class="card"><span class="num">03</span><h4>Tailwind and UI library</h4><p>Speeds up styling while maintaining structured visual patterns and clean spacing.</p></article>
+            <article class="card"><span class="num">04</span><h4>Prisma and database</h4><p>Supports backend data storage for bookings, user records, and operational workflows.</p></article>
+          </div>
+          <div class="footer">
+            <span>Implementation Stack</span>
+            <strong>Slide 05</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide even">
+      <div class="shell">
+        <div class="topbar">
+          <div>
+            <p class="label">Pricing</p>
+            <h2 class="title wide">Transparent Service Plans</h2>
+            <p class="intro">Pricing is presented in a simple, customer-friendly structure to improve clarity and reduce booking hesitation.</p>
+          </div>
+          <div class="note">Visible pricing helps the brand feel more trustworthy and reduces the friction of offline inquiry.</div>
+        </div>
+        <div class="split">
+          <div class="stack">
+            <div class="row-card"><h4>Basic cleaning tier</h4><p>Designed for routine home or office cleaning at an accessible entry price.</p></div>
+            <div class="row-card"><h4>Deep cleaning tier</h4><p>Higher-value package for more intensive cleaning and larger service scope.</p></div>
+            <div class="row-card"><h4>Subscription plans</h4><p>Recurring packages support repeat users and improve predictable revenue.</p></div>
+            <div class="row-card"><h4>Custom quotes</h4><p>Flexible options cover special requests, sanitization, and larger properties.</p></div>
+          </div>
+          <div class="panel">
+            <div class="mini"><p class="k">Pricing Logic</p><p class="v">Clear tiers communicate value faster than manual estimation alone.</p></div>
+            <div class="mini"><p class="k">Business Benefit</p><p class="v">Simple pricing pages improve conversion and reduce customer drop-off.</p></div>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Revenue Presentation</span>
+          <strong>Slide 06</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide odd">
+      <div class="shell">
+        <aside class="side">
+          <div>
+            <div class="mark">S</div>
+            <p class="brand">Booking Flow</p>
+            <p>The booking journey is a key product feature, not just a support function.</p>
+          </div>
+          <div class="meta">User Journey<br>Conversion Path<br>Convenience</div>
+        </aside>
+        <div class="main">
+          <div>
+            <p class="label">Booking</p>
+            <h2 class="title wide">Simple Digital Scheduling</h2>
+            <p class="intro">The booking experience is designed to move users from interest to confirmed service with minimal friction.</p>
+            <div class="rule"></div>
+          </div>
+          <div class="grid-4">
+            <article class="card"><span class="num">01</span><h4>Select service</h4><p>Users choose home cleaning, office cleaning, deep cleaning, or sanitization.</p></article>
+            <article class="card"><span class="num">02</span><h4>Choose schedule</h4><p>Date, time, and service frequency can be entered in a guided booking form.</p></article>
+            <article class="card"><span class="num">03</span><h4>Share details</h4><p>Property information and user contact data help the team prepare the service correctly.</p></article>
+            <article class="card"><span class="num">04</span><h4>Confirm request</h4><p>The customer submits the booking online instead of relying on manual phone coordination.</p></article>
+          </div>
+          <div class="footer">
+            <span>Conversion Journey</span>
+            <strong>Slide 07</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide even">
+      <div class="shell">
+        <div class="topbar">
+          <div>
+            <p class="label">Backend</p>
+            <h2 class="title wide">System Support Layer</h2>
+            <p class="intro">The backend structure turns the website from a brochure into a working service platform with real operational value.</p>
+          </div>
+          <div class="note">Bookings, user data, and admin actions depend on a stable backend flow and clean data handling.</div>
+        </div>
+        <div class="split">
+          <div class="stack">
+            <div class="row-card"><h4>API routes</h4><p>Server endpoints manage booking submissions, contact forms, and authentication-related actions.</p></div>
+            <div class="row-card"><h4>Database records</h4><p>Booking information can be stored and organized for follow-up, scheduling, and reporting.</p></div>
+            <div class="row-card"><h4>Authentication support</h4><p>Signup and login flows make the platform ready for customer accounts or admin dashboards.</p></div>
+            <div class="row-card"><h4>Scalable operations</h4><p>The backend setup supports future additions such as status tracking, invoices, or notifications.</p></div>
+          </div>
+          <div class="panel">
+            <div class="mini"><p class="k">Operational Value</p><p class="v">A proper backend reduces manual work and improves service reliability.</p></div>
+            <div class="mini"><p class="k">Future Scope</p><p class="v">Can extend into dashboards, automated reminders, and digital payment integration.</p></div>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Platform Capability</span>
+          <strong>Slide 08</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide odd">
+      <div class="shell">
+        <aside class="side">
+          <div>
+            <div class="mark">S</div>
+            <p class="brand">Benefits</p>
+            <p>The concept creates value for customers, operations, and long-term brand growth.</p>
+          </div>
+          <div class="meta">User Value<br>Brand Trust<br>Market Fit</div>
+        </aside>
+        <div class="main">
+          <div>
+            <p class="label">Benefits</p>
+            <h2 class="title wide">Why The Model Works</h2>
+            <p class="intro">Sparklesweep is stronger when the eco-service concept and the digital product experience support each other.</p>
+            <div class="rule"></div>
+          </div>
+          <div class="grid-4">
+            <article class="card"><span class="num">01</span><h4>Healthier spaces</h4><p>Safer products create better home and workplace conditions for everyday users.</p></article>
+            <article class="card"><span class="num">02</span><h4>Stronger trust</h4><p>Clear design, transparent pricing, and digital booking make the service feel credible.</p></article>
+            <article class="card"><span class="num">03</span><h4>Better efficiency</h4><p>Structured booking and backend handling reduce manual coordination and confusion.</p></article>
+            <article class="card"><span class="num">04</span><h4>Market relevance</h4><p>The brand fits growing demand for sustainable, convenient, and modern service businesses.</p></article>
+          </div>
+          <div class="footer">
+            <span>Value Proposition</span>
+            <strong>Slide 09</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide even">
+      <div class="shell">
+        <div class="topbar">
+          <div>
+            <p class="label">Conclusion</p>
+            <h2 class="title wide">A Premium Eco-Cleaning Platform</h2>
+            <p class="intro">Sparklesweep is not only a cleaning idea. It is a full digital service concept with a professional interface and scalable operating model.</p>
+          </div>
+          <div class="note">The deck now reflects both the brand concept and the website product structure behind it.</div>
+        </div>
+        <div class="split">
+          <div class="stack">
+            <div class="row-card"><h4>Modern brand identity</h4><p>Dark-tech presentation and premium design direction make the concept feel startup-ready.</p></div>
+            <div class="row-card"><h4>Clear web structure</h4><p>The website covers services, pricing, booking, authentication, and supporting pages.</p></div>
+            <div class="row-card"><h4>Operational depth</h4><p>Backend and database support turn the concept into a usable service platform.</p></div>
+            <div class="row-card"><h4>Growth potential</h4><p>The model can expand with automation, payments, dashboards, and wider market reach.</p></div>
+          </div>
+          <div class="panel">
+            <div class="mini"><p class="k">Final Message</p><p class="v">Sparklesweep combines clean design, clean technology, and clean living in one business idea.</p></div>
+            <div class="mini"><p class="k">Deck Outcome</p><p class="v">A professional pitch-style presentation with no scroll and a tighter slide fit.</p></div>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Closing Summary</span>
+          <strong>Slide 10</strong>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="click-zone left" id="prevZone" aria-hidden="true"></div>
+  <div class="click-zone right" id="nextZone" aria-hidden="true"></div>
+  <div class="slide-count" id="slideCount">01 / 10</div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const slideCount = document.getElementById("slideCount");
+    let currentSlide = 0;
+
+    function updateSlides(index) {
+      currentSlide = Math.max(0, Math.min(index, slides.length - 1));
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle("active", slideIndex === currentSlide);
+      });
+      slideCount.textContent = `${String(currentSlide + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
+    }
+
+    function nextSlide() {
+      updateSlides(currentSlide + 1);
+    }
+
+    function previousSlide() {
+      updateSlides(currentSlide - 1);
+    }
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight") nextSlide();
+      if (event.key === "ArrowLeft") previousSlide();
+    });
+
+    document.getElementById("nextZone").addEventListener("click", nextSlide);
+    document.getElementById("prevZone").addEventListener("click", previousSlide);
+
+    updateSlides(0);
+  </script>
+</body>
+</html>
