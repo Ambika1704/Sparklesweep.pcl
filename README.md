@@ -1,114 +1,119 @@
 # SparkleSweep
 
-SparkleSweep is a full-stack web application for an eco-friendly cleaning service. It gives customers a polished web experience to explore services, compare pricing, create an account, book cleaning appointments, and contact the business through responsive, production-style flows.
+SparkleSweep is a full-stack cleaning service platform for eco-friendly residential and commercial bookings. The application combines a polished customer-facing website with authentication, booking management, contact handling, and Prisma-backed persistence.
 
-The latest version expands the project from a static service website into a working booking platform with authentication, database-backed forms, and reusable UI components.
+## Capabilities
 
-## Highlights
-
-- Modern marketing homepage with eco-friendly brand positioning and service calls to action
-- Responsive navigation with desktop and mobile menu states
-- Service catalog covering home, deep, office, baby-safe, post-renovation, and move-in or move-out cleaning
-- Transparent pricing page with plan tiers and direct booking actions
-- Booking flow with validation, loading states, confirmation feedback, and backend persistence
-- Contact form with inquiry storage and user feedback states
-- Customer sign-up and login using credentials-based authentication
-- Prisma data layer backed by SQLite for local development
-- FAQ and testimonials pages to support trust and customer decision-making
-- Presentation deck included as `sparklesweep-presentation.html`
-
-## Recent Updates
-
-This repository now includes the following major updates:
-
-- Added Prisma schema, SQLite development database, and shared Prisma client setup
-- Added `User`, `Booking`, and `ContactMessage` data models
-- Added booking API routes for creating and listing booking requests
-- Added contact API routes for creating and listing customer inquiries
-- Added customer registration with password hashing through `bcryptjs`
-- Added NextAuth credentials login flow with JWT sessions
-- Added sign-up and login pages with password visibility controls and error handling
-- Improved booking and contact pages with submission states and backend integration
-- Added a SparkleSweep presentation deck for project demonstration
-- Updated dependencies for authentication, Prisma, forms, and UI support
+- Responsive marketing experience with homepage, services, pricing, FAQ, and testimonials
+- Customer sign-up and login through credentials-based authentication
+- Booking workflow with service selection, preferred schedule, validation, and confirmation states
+- Contact inquiry workflow with backend persistence
+- API routes for bookings, contact messages, registration, and authentication
+- Prisma ORM with SQLite for local development
+- Reusable UI system built with Tailwind CSS, shadcn/ui, Radix UI, and Lucide icons
+- Project presentation deck included as `sparklesweep-presentation.html`
 
 ## Tech Stack
 
-- **Framework:** Next.js 16 with App Router
-- **Language:** TypeScript
-- **UI:** React 19, Tailwind CSS, shadcn/ui, Radix UI
-- **Icons:** Lucide React
-- **Database:** SQLite
-- **ORM:** Prisma
-- **Authentication:** NextAuth with credentials provider
-- **Password Security:** bcryptjs
-- **Package Manager:** pnpm
+| Area | Technology |
+| --- | --- |
+| Framework | Next.js 16, App Router |
+| Language | TypeScript |
+| UI | React 19, Tailwind CSS, shadcn/ui, Radix UI |
+| Icons | Lucide React |
+| Authentication | NextAuth credentials provider |
+| ORM | Prisma |
+| Database | SQLite |
+| Security | bcryptjs password hashing |
+| Package Manager | pnpm |
+
+## System Architecture
+
+SparkleSweep uses a standard full-stack Next.js architecture. Customer-facing pages render the web experience, client forms submit requests to API routes, API handlers validate and process data, Prisma manages database access, and SQLite stores local development data.
+
+```text
+Frontend pages and forms -> Next.js API routes -> Prisma client -> SQLite database
+```
+
+## Architecture Diagram
+
+```mermaid
+flowchart LR
+  UI[Next.js App Router UI] --> Forms[Booking, Contact, Auth Forms]
+  Forms --> API[Next.js API Routes]
+  API --> Auth[NextAuth Credentials]
+  API --> Prisma[Prisma Client]
+  Auth --> Prisma
+  Prisma --> DB[(SQLite Database)]
+```
+
+## Flowchart
+
+```mermaid
+flowchart TD
+  A[Visit SparkleSweep] --> B[Browse services and pricing]
+  B --> C{Customer action}
+  C --> D[Sign up or log in]
+  C --> E[Submit booking request]
+  C --> F[Submit contact inquiry]
+  D --> G[Authentication API]
+  E --> H[Bookings API]
+  F --> I[Contact API]
+  G --> J[Prisma]
+  H --> J
+  I --> J
+  J --> K[(Database)]
+  K --> L[API response]
+  L --> M[Confirmation or error state]
+```
 
 ## Project Structure
 
 ```text
 .
 |-- app/
-|   |-- (site)/
-|   |   |-- page.tsx              # Homepage
-|   |   |-- booking/              # Booking form and confirmation flow
-|   |   |-- contact/              # Contact form and business details
-|   |   |-- faq/                  # Frequently asked questions
-|   |   |-- login/                # Customer login
-|   |   |-- pricing/              # Pricing plans
-|   |   |-- services/             # Service catalog
-|   |   |-- signup/               # Customer registration
-|   |   `-- testimonials/         # Customer testimonials
-|   |-- api/
-|   |   |-- auth/                 # NextAuth and registration routes
-|   |   |-- bookings/             # Booking API
-|   |   `-- contact/              # Contact-message API
+|   |-- (site)/                  # Customer-facing pages
+|   |-- api/                     # Auth, booking, and contact APIs
 |   |-- globals.css
 |   `-- layout.tsx
 |-- components/
-|   |-- ui/                       # Reusable shadcn/ui components
+|   |-- ui/                      # Shared UI primitives
 |   |-- navbar.tsx
 |   |-- footer.tsx
 |   `-- page-transition.tsx
-|-- hooks/                        # Reusable client hooks
+|-- hooks/                       # Reusable client hooks
 |-- lib/
-|   |-- prisma.ts                 # Prisma client instance
-|   `-- utils.ts                  # Shared utility helpers
+|   |-- prisma.ts                # Prisma client
+|   `-- utils.ts                 # Shared utilities
 |-- prisma/
-|   |-- schema.prisma             # Database schema
-|   `-- dev.db                    # Local SQLite database
-|-- public/                       # Static assets
-|-- styles/                       # Global style assets
+|   |-- schema.prisma            # Data models
+|   `-- dev.db                   # Local SQLite database
+|-- public/                      # Static assets
+|-- styles/                      # Global styles
 |-- sparklesweep-presentation.html
 |-- package.json
 |-- pnpm-lock.yaml
 `-- README.md
 ```
 
-## Core Data Models
+## Data Model
 
-### User
+| Model | Purpose |
+| --- | --- |
+| `User` | Stores customer account and authentication details |
+| `Booking` | Stores cleaning appointment requests, service type, schedule, status, and customer details |
+| `ContactMessage` | Stores contact form inquiries |
 
-Stores customer account details used for authentication and future booking association.
-
-### Booking
-
-Stores cleaning appointment requests, including customer details, address, selected service, preferred date and time, status, and timestamps.
-
-### ContactMessage
-
-Stores customer inquiries submitted through the contact page.
-
-## API Routes
+## API Reference
 
 | Route | Method | Purpose |
 | --- | --- | --- |
-| `/api/auth/signup` | `POST` | Register a new customer account |
-| `/api/auth/[...nextauth]` | `GET`, `POST` | Handle NextAuth authentication |
+| `/api/auth/signup` | `POST` | Register a customer account |
+| `/api/auth/[...nextauth]` | `GET`, `POST` | Handle authentication sessions |
 | `/api/bookings` | `POST` | Create a booking request |
-| `/api/bookings` | `GET` | List booking requests |
+| `/api/bookings` | `GET` | Retrieve booking requests |
 | `/api/contact` | `POST` | Save a contact inquiry |
-| `/api/contact` | `GET` | List contact inquiries |
+| `/api/contact` | `GET` | Retrieve contact inquiries |
 
 ## Getting Started
 
@@ -117,13 +122,13 @@ Stores customer inquiries submitted through the contact page.
 - Node.js 18 or newer
 - pnpm
 
-### Installation
+### 1. Install Dependencies
 
 ```bash
 pnpm install
 ```
 
-### Environment Variables
+### 2. Configure Environment Variables
 
 Create a `.env` file in the project root:
 
@@ -133,22 +138,37 @@ NEXTAUTH_SECRET="replace-with-a-secure-random-secret"
 NEXTAUTH_URL="http://localhost:3000"
 ```
 
-### Database Setup
-
-Generate the Prisma client and sync the schema:
+### 3. Initialize Prisma and Database
 
 ```bash
 npx prisma generate
 npx prisma db push
 ```
 
-### Run Locally
+### 4. Run the Application
 
 ```bash
 pnpm dev
 ```
 
-Open `http://localhost:3000` in your browser.
+Open `http://localhost:3000`.
+
+## Backend & Database Setup (Prisma)
+
+Prisma is used as the data access layer for users, bookings, and contact messages.
+
+```bash
+# Generate Prisma client
+npx prisma generate
+
+# Apply schema changes to the local SQLite database
+npx prisma db push
+
+# Optional: inspect data in Prisma Studio
+npx prisma studio
+```
+
+The database schema is defined in `prisma/schema.prisma`, and the local SQLite database is configured through `DATABASE_URL`.
 
 ## Available Scripts
 
@@ -159,15 +179,11 @@ Open `http://localhost:3000` in your browser.
 | `pnpm start` | Start the production server |
 | `pnpm lint` | Run ESLint |
 
-## Future Improvements
+## Roadmap
 
-- Customer dashboard for viewing and managing bookings
-- Admin panel for booking and contact-message management
+- Customer dashboard for booking management
+- Admin panel for bookings and contact messages
 - Email confirmations and reminder notifications
-- Online payment and invoice support
+- Payment and invoice support
 - Service-area validation and scheduling rules
 - Booking reschedule and cancellation workflows
-
-## Summary
-
-SparkleSweep is designed as a professional, full-stack cleaning service platform with a polished customer-facing interface and practical backend functionality. It now covers the core customer journey from discovery to account creation, inquiry, and booking, while leaving a clear path for admin tools, payments, notifications, and production deployment.
