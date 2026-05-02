@@ -136,3 +136,26 @@ pnpm start
 ## Summary
 
 SparkleSweep is a modern full-stack cleaning service application designed to combine a strong marketing experience with practical booking and customer interaction flows. It provides a solid foundation for evolving into a production-ready service platform while already covering the core journey from discovery to inquiry and booking.
+
+## Acknowledgment
+
+This project was developed as part of a group academic initiative to build a full-stack application using modern web technologies.
+
+Special acknowledgment to:
+- Project team members for their contributions and collaboration
+- Open-source community for tools like Next.js, Prisma, and Tailwind CSS
+- Learning resources and documentation that supported development
+
+## Author
+
+Ambika B Sajjan  
+GitHub: https://github.com/Ambika1704  
+Repository: https://github.com/Ambika1704/Sparklesweep.pcl
+
+## License
+
+This project is for educational and demonstration purposes.
+
+## Contributions
+
+This project was developed as part of a group. The current repository reflects the primary implementation and contributions by the author.
