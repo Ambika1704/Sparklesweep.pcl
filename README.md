@@ -187,3 +187,31 @@ The database schema is defined in `prisma/schema.prisma`, and the local SQLite d
 - Payment and invoice support
 - Service-area validation and scheduling rules
 - Booking reschedule and cancellation workflows
+
+## Summary
+
+SparkleSweep is a full-stack web application that demonstrates the design and implementation of a modern service-based platform. It integrates user authentication, booking workflows, and backend data management into a seamless user experience.
+
+The project focuses on building a scalable and structured system using Next.js and Prisma, while also delivering a clean and user-friendly interface for real-world service interactions. It serves as a strong foundation for extending into a production-ready platform with advanced features such as payments, notifications, and admin controls.
+
+## Acknowledgment
+
+This project was developed as part of a group academic initiative to build a full-stack application using modern web technologies.
+
+Special acknowledgment to:
+- Project team members for their contributions and collaboration
+- Open-source community for tools like Next.js, Prisma, and Tailwind CSS
+- Learning resources and documentation that supported development
+
+## Author
+
+Ambika B Sajjan  
+GitHub: https://github.com/Ambika1704  
+
+## License
+
+This project is for educational and demonstration purposes.
+
+## Contributions
+
+This project was developed as part of a group. The current repository reflects the primary implementation and contributions by the author.
