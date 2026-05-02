@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 const plans = [
   {
     name: "Fresh Start",
-    price: "$89",
+    price: "₹1,999",
     period: "per visit",
     description: "Perfect for smaller homes or apartments needing a regular clean.",
     features: [
@@ -20,7 +20,7 @@ const plans = [
   },
   {
     name: "Green Clean",
-    price: "$149",
+    price: "₹3,499",
     period: "per visit",
     description:
       "Our most popular plan for families wanting a thorough, sustainable clean.",
@@ -37,7 +37,7 @@ const plans = [
   },
   {
     name: "Eco Premium",
-    price: "$249",
+    price: "₹5,999",
     period: "per visit",
     description:
       "The ultimate eco-cleaning experience for larger homes and special needs.",
