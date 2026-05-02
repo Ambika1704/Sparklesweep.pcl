@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { type Dispatch, type SetStateAction, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -13,11 +14,41 @@ import {
 } from "@/components/ui/select"
 import { CalendarDays, CheckCircle2 } from "lucide-react"
 
+const customServices = [
+  "Regular Home Cleaning",
+  "Deep Cleaning",
+  "Office Cleaning",
+  "Baby-Safe Cleaning",
+  "Post-Renovation Cleaning",
+  "Move-In / Move-Out",
+]
+
+const packageAddOns = [
+  "Kitchen deep clean",
+  "Sofa cleaning",
+  "Bathroom sanitization",
+  "Carpet and upholstery care",
+]
+
 export default function BookingPage() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [serviceType, setServiceType] = useState("")
+  const [selectedServices, setSelectedServices] = useState<string[]>([])
+  const [selectedAddOns, setSelectedAddOns] = useState<string[]>([])
+
+  const toggleSelection = (
+    value: string,
+    selectedValues: string[],
+    setSelectedValues: Dispatch<SetStateAction<string[]>>
+  ) => {
+    setSelectedValues(
+      selectedValues.includes(value)
+        ? selectedValues.filter((item) => item !== value)
+        : [...selectedValues, value]
+    )
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -30,14 +61,29 @@ export default function BookingPage() {
       return
     }
 
+    if (serviceType === "custom" && selectedServices.length < 2) {
+      setError("Please choose at least two services for a custom package")
+      setLoading(false)
+      return
+    }
+
     const formData = new FormData(e.currentTarget)
+    const bookingServiceType =
+      serviceType === "custom"
+        ? `Custom Cleaning Package: ${selectedServices.join(", ")}${
+            selectedAddOns.length
+              ? `; Add-ons: ${selectedAddOns.join(", ")}`
+              : ""
+          }; Flexible duration based on selection`
+        : serviceType
+
     const data = {
       name: formData.get("name"),
       email: formData.get("email"),
       address: formData.get("address"),
       date: formData.get("date"),
       time: formData.get("time"),
-      serviceType,
+      serviceType: bookingServiceType,
     }
 
     try {
@@ -78,6 +124,8 @@ export default function BookingPage() {
           onClick={() => {
             setSubmitted(false)
             setServiceType("")
+            setSelectedServices([])
+            setSelectedAddOns([])
           }}
         >
           Book Another
@@ -168,9 +216,73 @@ export default function BookingPage() {
                   Post-Renovation Cleaning
                 </SelectItem>
                 <SelectItem value="move">Move-In / Move-Out</SelectItem>
+                <SelectItem value="custom">Custom Cleaning Packages</SelectItem>
               </SelectContent>
             </Select>
           </div>
+
+          {serviceType === "custom" && (
+            <div className="flex flex-col gap-4 rounded-lg bg-primary/5 p-4">
+              <div>
+                <h2 className="text-sm font-semibold text-foreground">
+                  Custom Cleaning Packages
+                </h2>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Select two or more services, add optional extras, and we will
+                  set a flexible duration based on your selection.
+                </p>
+              </div>
+
+              <div className="grid gap-3 md:grid-cols-2">
+                {customServices.map((service) => (
+                  <div key={service} className="flex items-center gap-2">
+                    <Checkbox
+                      id={`service-${service}`}
+                      checked={selectedServices.includes(service)}
+                      onCheckedChange={() =>
+                        toggleSelection(
+                          service,
+                          selectedServices,
+                          setSelectedServices
+                        )
+                      }
+                    />
+                    <Label
+                      htmlFor={`service-${service}`}
+                      className="text-sm font-normal"
+                    >
+                      {service}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+
+              <div className="border-t border-border pt-4">
+                <p className="mb-3 text-xs font-medium uppercase text-muted-foreground">
+                  Add-ons
+                </p>
+                <div className="grid gap-3 md:grid-cols-2">
+                  {packageAddOns.map((addOn) => (
+                    <div key={addOn} className="flex items-center gap-2">
+                      <Checkbox
+                        id={`addon-${addOn}`}
+                        checked={selectedAddOns.includes(addOn)}
+                        onCheckedChange={() =>
+                          toggleSelection(addOn, selectedAddOns, setSelectedAddOns)
+                        }
+                      />
+                      <Label
+                        htmlFor={`addon-${addOn}`}
+                        className="text-sm font-normal"
+                      >
+                        {addOn}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           <Button type="submit" size="lg" className="mt-2 rounded-full" disabled={loading}>
             {loading ? "Confirming..." : "Confirm Booking"}

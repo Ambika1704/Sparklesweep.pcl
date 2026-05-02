@@ -17,14 +17,14 @@ const contactInfo = [
   {
     icon: Phone,
     title: "Phone",
-    detail: "+1 (555) 234-5678",
+    detail: "+91 98765 43210",
     description: "Mon-Fri, 8am to 6pm.",
   },
   {
     icon: MapPin,
     title: "Office",
-    detail: "123 Green Valley Road",
-    description: "Eco City, EC 10001",
+    detail: "45 MG Road",
+    description: "Bangalore, Karnataka 560001, India",
   },
 ]
 

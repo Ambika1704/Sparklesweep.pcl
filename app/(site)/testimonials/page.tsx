@@ -2,37 +2,37 @@ import { Star } from "lucide-react"
 
 const testimonials = [
   {
-    name: "Sarah Mitchell",
+    name: "Ananya Sharma",
     role: "Homeowner",
     rating: 5,
     text: "SparkleSweep transformed my home! I love knowing that the products they use are safe for my kids and pets. The team is professional, thorough, and always on time.",
   },
   {
-    name: "David Chen",
+    name: "Rohan Verma",
     role: "Office Manager",
-    rating: 5,
+    rating: 4,
     text: "We switched to SparkleSweep for our office and the difference is remarkable. The air quality improved noticeably and our team loves the fresh, chemical-free clean.",
   },
   {
-    name: "Emma Rodriguez",
+    name: "Priya Nair",
     role: "New Mother",
     rating: 5,
     text: "As a new mom, I was so worried about harsh chemicals around my baby. SparkleSweep gave me peace of mind with their baby-safe cleaning service. Absolutely recommend!",
   },
   {
-    name: "James Okafor",
+    name: "Arjun Mehta",
     role: "Apartment Renter",
-    rating: 4,
+    rating: 3,
     text: "Affordable, reliable, and genuinely eco-friendly. I have used their regular cleaning service for six months now and my apartment has never looked better.",
   },
   {
-    name: "Priya Sharma",
+    name: "Neha Gupta",
     role: "Interior Designer",
-    rating: 5,
+    rating: 4,
     text: "I recommend SparkleSweep to all my clients after renovation projects. Their post-renovation cleaning is thorough and they treat every space with care.",
   },
   {
-    name: "Michael Torres",
+    name: "Karan Singh",
     role: "Property Manager",
     rating: 5,
     text: "Managing multiple properties means I need a cleaning service I can trust. SparkleSweep consistently delivers excellent results across all my units.",
