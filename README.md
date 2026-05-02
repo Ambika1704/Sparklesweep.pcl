@@ -1,62 +1,96 @@
-# SparkleSweep - Cleaning Service Web Application
+# SparkleSweep
 
-SparkleSweep is a full-stack web application for an eco-friendly cleaning service. It gives customers a modern web experience to browse services, compare pricing, create an account, book appointments, and contact the business through responsive, user-friendly flows.
+SparkleSweep is a full-stack cleaning service platform for eco-friendly residential and commercial bookings. The application combines a polished customer-facing website with authentication, booking management, contact handling, and Prisma-backed persistence.
 
-The project combines a Next.js frontend with Prisma-backed persistence for customer accounts, booking requests, and contact messages.
+## Capabilities
 
-## Key Features
-
-- Online booking flow with customer details, address, preferred date and time, and service selection
-- Service catalog for regular home cleaning, deep cleaning, office cleaning, baby-safe cleaning, post-renovation cleaning, and move-in or move-out cleaning
-- Transparent pricing page with plan tiers and direct booking entry points
-- Customer authentication with sign-up and sign-in flows powered by credentials-based auth
-- Contact form for customer inquiries with backend persistence
-- FAQ and testimonials pages to improve trust and user engagement
-- Eco-friendly brand positioning centered on organic products, water conservation, and family-safe cleaning
-- Responsive navigation, reusable UI components, and page transitions across the site
+- Responsive marketing experience with homepage, services, pricing, FAQ, and testimonials
+- Customer sign-up and login through credentials-based authentication
+- Booking workflow with service selection, preferred schedule, validation, and confirmation states
+- Contact inquiry workflow with backend persistence
+- API routes for bookings, contact messages, registration, and authentication
+- Prisma ORM with SQLite for local development
+- Reusable UI system built with Tailwind CSS, shadcn/ui, Radix UI, and Lucide icons
+- Project presentation deck included as `sparklesweep-presentation.html`
 
 ## Tech Stack
 
-- Next.js 16 with App Router
-- TypeScript
-- React 19
-- Tailwind CSS
-- shadcn/ui and Radix UI
-- Prisma ORM
-- SQLite
-- NextAuth
-- bcryptjs
-- pnpm
+| Area | Technology |
+| --- | --- |
+| Framework | Next.js 16, App Router |
+| Language | TypeScript |
+| UI | React 19, Tailwind CSS, shadcn/ui, Radix UI |
+| Icons | Lucide React |
+| Authentication | NextAuth credentials provider |
+| ORM | Prisma |
+| Database | SQLite |
+| Security | bcryptjs password hashing |
+| Package Manager | pnpm |
+
+## System Architecture
+
+SparkleSweep uses a standard full-stack Next.js architecture. Customer-facing pages render the web experience, client forms submit requests to API routes, API handlers validate and process data, Prisma manages database access, and SQLite stores local development data.
+
+```text
+Frontend pages and forms -> Next.js API routes -> Prisma client -> SQLite database
+```
+
+## Architecture Diagram
+
+```mermaid
+flowchart LR
+  UI[Next.js App Router UI] --> Forms[Booking, Contact, Auth Forms]
+  Forms --> API[Next.js API Routes]
+  API --> Auth[NextAuth Credentials]
+  API --> Prisma[Prisma Client]
+  Auth --> Prisma
+  Prisma --> DB[(SQLite Database)]
+```
+
+## Flowchart
+
+```mermaid
+flowchart TD
+  A[Visit SparkleSweep] --> B[Browse services and pricing]
+  B --> C{Customer action}
+  C --> D[Sign up or log in]
+  C --> E[Submit booking request]
+  C --> F[Submit contact inquiry]
+  D --> G[Authentication API]
+  E --> H[Bookings API]
+  F --> I[Contact API]
+  G --> J[Prisma]
+  H --> J
+  I --> J
+  J --> K[(Database)]
+  K --> L[API response]
+  L --> M[Confirmation or error state]
+```
 
 ## Project Structure
 
 ```text
 .
 |-- app/
-|   |-- (site)/
-|   |   |-- page.tsx            # Home page
-|   |   |-- booking/            # Booking form and confirmation flow
-|   |   |-- contact/            # Contact page
-|   |   |-- faq/                # Frequently asked questions
-|   |   |-- login/              # Customer login page
-|   |   |-- pricing/            # Pricing plans
-|   |   |-- services/           # Service catalog
-|   |   |-- signup/             # Account registration page
-|   |   `-- testimonials/       # Customer testimonials
-|   |-- api/
-|   |   |-- auth/               # NextAuth and signup endpoints
-|   |   |-- bookings/           # Booking API routes
-|   |   `-- contact/            # Contact API routes
+|   |-- (site)/                  # Customer-facing pages
+|   |-- api/                     # Auth, booking, and contact APIs
 |   |-- globals.css
 |   `-- layout.tsx
-|-- components/                 # Shared layout and UI components
-|-- hooks/                      # Reusable client hooks
-|-- lib/                        # Prisma client and utility helpers
+|-- components/
+|   |-- ui/                      # Shared UI primitives
+|   |-- navbar.tsx
+|   |-- footer.tsx
+|   `-- page-transition.tsx
+|-- hooks/                       # Reusable client hooks
+|-- lib/
+|   |-- prisma.ts                # Prisma client
+|   `-- utils.ts                 # Shared utilities
 |-- prisma/
-|   |-- schema.prisma           # Database schema
-|   `-- dev.db                  # SQLite development database
-|-- public/                     # Static assets and imagery
-|-- styles/                     # Global style assets
+|   |-- schema.prisma            # Data models
+|   `-- dev.db                   # Local SQLite database
+|-- public/                      # Static assets
+|-- styles/                      # Global styles
+|-- sparklesweep-presentation.html
 |-- package.json
 |-- pnpm-lock.yaml
 `-- README.md
@@ -64,11 +98,22 @@ The project combines a Next.js frontend with Prisma-backed persistence for custo
 
 ## Data Model
 
-SparkleSweep currently persists the following core entities:
+| Model | Purpose |
+| --- | --- |
+| `User` | Stores customer account and authentication details |
+| `Booking` | Stores cleaning appointment requests, service type, schedule, status, and customer details |
+| `ContactMessage` | Stores contact form inquiries |
 
-- `User`: customer account information for authentication and booking association
-- `Booking`: booking request details including name, email, address, service type, date, time, and status
-- `ContactMessage`: customer inquiry submissions from the contact form
+## API Reference
+
+| Route | Method | Purpose |
+| --- | --- | --- |
+| `/api/auth/signup` | `POST` | Register a customer account |
+| `/api/auth/[...nextauth]` | `GET`, `POST` | Handle authentication sessions |
+| `/api/bookings` | `POST` | Create a booking request |
+| `/api/bookings` | `GET` | Retrieve booking requests |
+| `/api/contact` | `POST` | Save a contact inquiry |
+| `/api/contact` | `GET` | Retrieve contact inquiries |
 
 ## Getting Started
 
@@ -77,15 +122,15 @@ SparkleSweep currently persists the following core entities:
 - Node.js 18 or newer
 - pnpm
 
-### Installation
+### 1. Install Dependencies
 
 ```bash
 pnpm install
 ```
 
-### Environment
+### 2. Configure Environment Variables
 
-Create or update `.env` with the required application settings:
+Create a `.env` file in the project root:
 
 ```env
 DATABASE_URL="file:./prisma/dev.db"
@@ -93,49 +138,61 @@ NEXTAUTH_SECRET="replace-with-a-secure-random-secret"
 NEXTAUTH_URL="http://localhost:3000"
 ```
 
-### Database
-
-Generate the Prisma client and sync the schema:
+### 3. Initialize Prisma and Database
 
 ```bash
 npx prisma generate
 npx prisma db push
 ```
 
-### Development
+### 4. Run the Application
 
 ```bash
 pnpm dev
 ```
 
-Open `http://localhost:3000` in your browser.
+Open `http://localhost:3000`.
 
-### Production
+## Backend & Database Setup (Prisma)
+
+Prisma is used as the data access layer for users, bookings, and contact messages.
 
 ```bash
-pnpm build
-pnpm start
+# Generate Prisma client
+npx prisma generate
+
+# Apply schema changes to the local SQLite database
+npx prisma db push
+
+# Optional: inspect data in Prisma Studio
+npx prisma studio
 ```
+
+The database schema is defined in `prisma/schema.prisma`, and the local SQLite database is configured through `DATABASE_URL`.
 
 ## Available Scripts
 
-- `pnpm dev` - starts the local development server
-- `pnpm build` - creates the production build
-- `pnpm start` - runs the production server
-- `pnpm lint` - runs ESLint
+| Command | Description |
+| --- | --- |
+| `pnpm dev` | Start the development server |
+| `pnpm build` | Create a production build |
+| `pnpm start` | Start the production server |
+| `pnpm lint` | Run ESLint |
 
-## Future Improvements
+## Roadmap
 
-- Customer dashboard for viewing and managing bookings
-- Admin panel for booking and contact-message management
+- Customer dashboard for booking management
+- Admin panel for bookings and contact messages
 - Email confirmations and reminder notifications
-- Online payments and invoice generation
+- Payment and invoice support
 - Service-area validation and scheduling rules
 - Booking reschedule and cancellation workflows
 
 ## Summary
 
-SparkleSweep is a modern full-stack cleaning service application designed to combine a strong marketing experience with practical booking and customer interaction flows. It provides a solid foundation for evolving into a production-ready service platform while already covering the core journey from discovery to inquiry and booking.
+SparkleSweep is a full-stack web application that demonstrates the design and implementation of a modern service-based platform. It integrates user authentication, booking workflows, and backend data management into a seamless user experience.
+
+The project focuses on building a scalable and structured system using Next.js and Prisma, while also delivering a clean and user-friendly interface for real-world service interactions. It serves as a strong foundation for extending into a production-ready platform with advanced features such as payments, notifications, and admin controls.
 
 ## Acknowledgment
 
@@ -150,7 +207,6 @@ Special acknowledgment to:
 
 Ambika B Sajjan  
 GitHub: https://github.com/Ambika1704  
-Repository: https://github.com/Ambika1704/Sparklesweep.pcl
 
 ## License
 
