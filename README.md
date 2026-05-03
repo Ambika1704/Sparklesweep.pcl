@@ -132,7 +132,7 @@ pnpm install
 Create a `.env` file in the project root:
 
 ```env
-DATABASE_URL="file:./prisma/dev.db"
+DATABASE_URL="your_database_connection_string"   # e.g., PostgreSQL / Neon
 NEXTAUTH_SECRET="replace-with-a-secure-random-secret"
 NEXTAUTH_URL="http://localhost:3000"
 ```
