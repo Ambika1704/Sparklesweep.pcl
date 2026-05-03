@@ -197,11 +197,6 @@ The project focuses on building a scalable and structured system using Next.js a
 
 This project was developed as part of a group academic initiative to build a full-stack application using modern web technologies.
 
-Special acknowledgment to:
-- Project team members for their contributions and collaboration
-- Open-source community for tools like Next.js, Prisma, and Tailwind CSS
-- Learning resources and documentation that supported development
-
 ## Author
 
 Ambika B Sajjan  
