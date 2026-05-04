@@ -208,9 +208,8 @@ This project is for educational and demonstration purposes.
 
 ## Contributions
 
-This project was developed as part of a group. The current repository reflects the primary implementation and contributions by the author.
-
 Contributions are welcome. You can contribute by:
-- Reporting bugs or issues
-- Suggesting new features or improvements
-- Submitting pull requests
+
+- Reporting bugs or issues  
+- Suggesting new features or improvements  
+- Submitting pull requests  
